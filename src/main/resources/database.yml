@@ -1,0 +1,14 @@
+# DO NOT TOUCH THIS!
+config-version: 1
+# Storage types: mongodb, sql, mysql
+storage: "sql"
+
+mongodb:
+  uri: ""
+
+mysql:
+  host: "hostname"
+  user: "username"
+  password: "password"
+  database: "database"
+  port: 3306

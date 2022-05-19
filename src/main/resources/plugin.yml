@@ -1,0 +1,28 @@
+name: RTags
+version: '${project.version}'
+main: ga.justreddy.wiki.rtags.RTags
+api-version: 1.13
+softdepend: [ PlaceholderAPI ]
+authors: [ JustReddy ]
+description: Tags plugin with database support!
+commands:
+  rtags:
+    aliases:
+      - tag
+      - tags
+permissions:
+  rtags.*:
+    children:
+      - rtags.command.*
+  rtags.command.*:
+    children:
+      - rtags.command.create
+      - rtags.command.delete
+      - rtags.command.settag
+      - rtags.command.edit
+      - rtags.command.view
+libraries:
+  - com.h2database:h2:2.1.212
+  - org.mongodb:mongodb-driver:3.12.11
+  - org.mongodb:mongodb-driver-core:3.12.11
+  - org.mongodb:bson:3.12.11
