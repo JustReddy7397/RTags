@@ -69,11 +69,13 @@ public final class RTags extends JavaPlugin {
                 );
                 break;
         }
-        TagManager.getTagManager().loadTags();
         getServer().getPluginManager().registerEvents(new MenuEvent(), this);
         getServer().getPluginManager().registerEvents(new JoinEvent(), this);
         getServer().getPluginManager().registerEvents(new ChatEvent(), this);
         getCommand("rtags").setExecutor(new TagCommand());
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            TagManager.getTagManager().loadTags();
+        }, 20L);
     }
 
     @Override

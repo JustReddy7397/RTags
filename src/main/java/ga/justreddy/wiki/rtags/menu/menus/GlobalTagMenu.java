@@ -40,6 +40,7 @@ public class GlobalTagMenu extends PaginatedSuperMenu {
                 lore.add("&4%line%");
                 lore.add(tag.getName());
                 lore.add(tag.getDescription());
+                lore.add("&4%line%");
                 meta.setLore(Utils.formatList(lore));
                 nameTag.setItemMeta(meta);
                 inventory.addItem(nameTag);

@@ -2,14 +2,17 @@ package ga.justreddy.wiki.rtags.commands;
 
 import ga.justreddy.wiki.rtags.menu.menus.EditMenu;
 import ga.justreddy.wiki.rtags.menu.menus.GlobalTagMenu;
+import ga.justreddy.wiki.rtags.menu.menus.PlayerTagMenu;
 import ga.justreddy.wiki.rtags.tags.TagData;
 import ga.justreddy.wiki.rtags.tags.TagManager;
 import ga.justreddy.wiki.rtags.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.h2.index.Index;
 import org.jetbrains.annotations.NotNull;
 import lombok.Getter;
 import java.util.ArrayList;
@@ -42,7 +45,7 @@ public class TagCommand implements CommandExecutor {
                 case "edit": runEditCommand(player, args); break;
                 case "help": runHelpCommand(player, args); break;
                 case "list": runListCommand(player, args); break;
-                case "info": runInfoCommand(player, args);
+                case "info": runInfoCommand(player, args); break;
                 default: Utils.errorCommand(player, "Command doesn't exist! Try /tag help"); break;
             }
         }catch (IndexOutOfBoundsException ex) {
@@ -109,7 +112,17 @@ public class TagCommand implements CommandExecutor {
     }
 
     private void runListCommand(Player player, String[] args) {
-        new GlobalTagMenu().open(player);
+        try{
+            if (args[1].equalsIgnoreCase("all")) {
+                new GlobalTagMenu().open(player);
+                return;
+            }
+            Player player1 = Bukkit.getPlayer(args[1]);
+            if (player1 == null) return;
+            new PlayerTagMenu(player1).open(player);
+        }catch (IndexOutOfBoundsException ex) {
+            new PlayerTagMenu(player).open(player);
+        }
     }
 
 }

@@ -6,6 +6,7 @@ import ga.justreddy.wiki.rtags.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -27,6 +28,7 @@ public class TagManager {
         for(Tag tag : TagData.getTagData().getTags()) {
             tags.add(tag);
             tagById.put(tag.getIdentifier(), tag);
+            Bukkit.getServer().getPluginManager().addPermission(new Permission(tag.getPermission()));
             Utils.sendConsole("[RTags] &aLoaded custom tag: &l" + tag.getIdentifier());
         }
     }

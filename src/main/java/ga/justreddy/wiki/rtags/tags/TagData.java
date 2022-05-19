@@ -70,22 +70,9 @@ public class TagData {
     @SneakyThrows
     public List<Tag> getPlayerTags(Player player) {
         List<Tag> tags = new ArrayList<>();
-        if (databaseManager.isMongoConnected()) {
-            Document document = databaseManager.getCollection("playersTag").find(new Document("uuid", player.getUniqueId())).first();
-            if (document != null) {
-                for(String identifier : document.getList("tags", String.class)) {
-                    Tag tag = TagManager.getTagManager().getTag(identifier);
-                    tags.add(tag);
-                }
-            }
-        }else {
-            ResultSet rs = databaseManager.getResult("SELECT * FROM rtags_playerstags WHERE uuid='"+player.getUniqueId()+"'");
-            if (rs.next()) {
-                String[] identifier = rs.getString("tags").split(";");
-                for (String id : identifier) {
-                    Tag tag = TagManager.getTagManager().getTag(id);
-                    tags.add(tag);
-                }
+        for(Tag tag : TagManager.getTagManager().getTags()) {
+            if(player.hasPermission(tag.getPermission())) {
+                tags.add(tag);
             }
         }
         return tags;

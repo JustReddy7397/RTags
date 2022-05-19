@@ -19,7 +19,7 @@ public class DatabaseManager {
             con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password);
             con.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS rtags_playerTags (uuid VARCHAR(255), identifier VARCHAR(255))");
             con.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS rtags_tags (identifier VARCHAR(255), name VARCHAR(255), description VARCHAR(255))");
-            con.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS rtags_playerstags (uuid VARCHAR(255), tags VARCHAR(1000000000))");
+            //con.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS rtags_playerstags (uuid VARCHAR(255), tags VARCHAR(1000000000))");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -31,7 +31,7 @@ public class DatabaseManager {
             con = DriverManager.getConnection("jdbc:h2:" + plugin.getDataFolder().getAbsolutePath() + "/" + storagePath);
             con.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS rtags_playerTags (uuid VARCHAR(255), identifier VARCHAR(255))");
             con.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS rtags_tags (identifier VARCHAR(255), name VARCHAR(255), description VARCHAR(255))");
-            con.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS rtags_playerstags (uuid VARCHAR(255), tags VARCHAR(1000000000))");
+           // con.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS rtags_playerstags (uuid VARCHAR(255), tags VARCHAR(1000000000))");
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
