@@ -49,7 +49,7 @@ public class TagData {
 
     public void setTag(String uuid, String id) {
         if (databaseManager.isMongoConnected()) {
-            databaseManager.getCollection("playerTags").updateOne(Filters.eq("uuid", uuid), Updates.set("identifier", id));
+            databaseManager.getCollection("playertags").updateOne(Filters.eq("uuid", uuid), Updates.set("identifier", id));
         } else {
             databaseManager.update("UPDATE rtags_playerTags SET identifier='" + id + "' WHERE uuid='" + uuid + "'");
         }
@@ -58,7 +58,7 @@ public class TagData {
     @SneakyThrows
     public String getTag(String uuid) {
         if (databaseManager.isMongoConnected()) {
-            Document doc = databaseManager.getCollection("playerTags").find(new Document("uuid", uuid)).first();
+            Document doc = databaseManager.getCollection("playertags").find(new Document("uuid", uuid)).first();
             if (doc != null) return doc.getString("identifier");
         } else {
             ResultSet rs = databaseManager.getResult("SELECT * FROM rtags_playerTags WHERE uuid='" + uuid + "'");

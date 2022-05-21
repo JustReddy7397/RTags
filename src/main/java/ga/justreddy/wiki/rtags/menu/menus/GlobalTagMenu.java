@@ -22,7 +22,28 @@ public class GlobalTagMenu extends PaginatedSuperMenu {
 
     @Override
     public void handleMenu(InventoryClickEvent e) {
-
+        final Player p = (Player) e.getWhoClicked();
+        if (e.getCurrentItem().getType() == XMaterial.LIME_DYE.parseMaterial() && e.getCurrentItem().getItemMeta()
+                .getDisplayName().equals(Utils.format("&aLeft"))
+        ) {
+            if (page == 0) {
+                p.sendMessage(Utils.format("&cYou are already on the first page."));
+            } else {
+                page -= 1;
+                super.open(p);
+            }
+        } else if (e.getCurrentItem().getType() == XMaterial.LIME_DYE.parseMaterial() &&e.getCurrentItem().getItemMeta()
+                .getDisplayName().equals(Utils.format("&aRight"))
+        ) {
+            if ((index + 1) >= TagData.getTagData().getTags().size()) {
+                p.sendMessage(Utils.format("&cYou are on the last page."));
+            } else {
+                page += 1;
+                super.open(p);
+            }
+        } else if (e.getCurrentItem().getType() == XMaterial.BARRIER.parseMaterial()) {
+            p.closeInventory();
+        }
     }
 
     @Override

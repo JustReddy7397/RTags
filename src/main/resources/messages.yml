@@ -1,0 +1,13 @@
+# DO NOT TOUCH THIS!
+config-version: 1
+
+no-perms: "Missing permission: %permission%"
+tag-create: "&aSuccessfully created a tag with the identifier: %identifier%"
+tag-exists: "A tag with that identifier already exists"
+tag-no-exist: "A tag with that identifier doesn't exist"
+tag-delete: "&aSuccessfully deleted the tag with the identifier: %identifier%"
+tag-name-change: "&aSuccessfully changed the name of the tag %tag% to %name%"
+tag-description-change: "&aSuccessfully changed the description of the tag %tag%"
+tag-selected: "&aSuccessfully selected the tag: %identifier%"
+tag-removed: "&aSuccessfully removed your tag"
+reload: "&aSuccessfully reloaded the plugin"

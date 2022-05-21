@@ -15,8 +15,8 @@ public class JoinEvent implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         if(RTags.getPlugin().getDatabaseManager().isMongoConnected()) {
-            Document document = RTags.getPlugin().getDatabaseManager().getCollection("tags").find(new Document("uuid", e.getPlayer().getUniqueId())).first();
-            if (document == null) RTags.getPlugin().getDatabaseManager().getCollection("tags").insertOne(new Document("uuid", e.getPlayer().getUniqueId())
+            Document document = RTags.getPlugin().getDatabaseManager().getCollection("playertags").find(new Document("uuid", e.getPlayer().getUniqueId().toString())).first();
+            if (document == null) RTags.getPlugin().getDatabaseManager().getCollection("playertags").insertOne(new Document("uuid", e.getPlayer().getUniqueId().toString())
                     .append("identifier", ""));
         }else{
             ResultSet rs = RTags.getPlugin().getDatabaseManager().getResult("SELECT * FROM playerTags WHERE uuid='"+e.getPlayer().getUniqueId()+"'");

@@ -4,6 +4,7 @@ import ga.justreddy.wiki.rtags.RTags;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class Utils {
         return list;
     }
 
-    public static void sendMessage(Player player, String message) {
+    public static void sendMessage(@NotNull Player player, @NotNull String message) {
         player.sendMessage(format(message.replace("%line%", CHAT_LINE)));
     }
 

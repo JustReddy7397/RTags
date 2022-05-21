@@ -20,14 +20,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.sql.DriverManager;
+import java.util.logging.Level;
 
 public final class RTags extends JavaPlugin {
 
     @Getter private static RTags plugin;
     @Getter DatabaseManager databaseManager;
     @Getter private YamlConfig databaseConfig;
+    @Getter private YamlConfig messagesConfig;
 
     private static final int DATABASE_VERSION = 1;
+    private static final int MESSAGES_VERSION = 1;
 
     @Override
     public void onLoad() {
@@ -46,9 +49,27 @@ public final class RTags extends JavaPlugin {
         // Plugin startup logic
         plugin = this;
         if(!loadConfigs()) return;
+        getServer().getConsoleSender().sendMessage(Utils.format("&a=-=-=-=-RTags-=-=-=-="));
+        getServer().getConsoleSender().sendMessage(Utils.format("&bMade by: " + getDescription().getAuthors()));
+        getServer().getConsoleSender().sendMessage(Utils.format("&bVersion: " + getDescription().getVersion()));
+        getServer().getConsoleSender().sendMessage(Utils.format("&bChecking for updates..."));
+/*        new VersionCheckerTask(this, id).getVersion(v -> {
+            if(getDescription().getVersion().equalsIgnoreCase(v)){
+                getServer().getConsoleSender().sendMessage(Utils.c("&aLooks like there isn't a new update available!"));
+            }else{
+                getServer().getConsoleSender().sendMessage(Utils.c("&cLooks like there is a new update available!"));
+                getServer().getConsoleSender().sendMessage(Utils.c("&Link: https://www.spigotmc.org/resources/teleportbow.79733/"));
+            }
+        });*/
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            getServer().getConsoleSender().sendMessage(Utils.format("&aPlaceholderAPI found! Using it!"));
             new Placeholders().register();
+        }else{
+            getServer().getConsoleSender().sendMessage(Utils.format("&cPlaceholderAPI not found! Not using it!"));
         }
+        getServer().getConsoleSender().sendMessage(Utils.format("&a=-=-=-=-RTags-=-=-=-="));
+
+
         switch (getDatabaseConfig().getConfig().getString("storage").toLowerCase()) {
             case "mongodb":
                 databaseManager = new DatabaseManager();
@@ -91,6 +112,12 @@ public final class RTags extends JavaPlugin {
             databaseConfig = new YamlConfig(currentlyLoading);
             if(databaseConfig.isOutdated(DATABASE_VERSION)) {
                 Utils.error(null, "Outdated database.yml file.", true);
+                return false;
+            }
+            currentlyLoading = "messages.yml";
+            messagesConfig = new YamlConfig(currentlyLoading);
+            if(messagesConfig.isOutdated(MESSAGES_VERSION)) {
+                Utils.error(null, "Outdated messages.yml file.", true);
                 return false;
             }
         }catch (IOException | InvalidConfigurationException ex) {
