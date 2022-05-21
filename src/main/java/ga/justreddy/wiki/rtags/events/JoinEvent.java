@@ -19,9 +19,9 @@ public class JoinEvent implements Listener {
             if (document == null) RTags.getPlugin().getDatabaseManager().getCollection("playertags").insertOne(new Document("uuid", e.getPlayer().getUniqueId().toString())
                     .append("identifier", ""));
         }else{
-            ResultSet rs = RTags.getPlugin().getDatabaseManager().getResult("SELECT * FROM playerTags WHERE uuid='"+e.getPlayer().getUniqueId()+"'");
+            ResultSet rs = RTags.getPlugin().getDatabaseManager().getResult("SELECT * FROM rtags_playerTags WHERE uuid='"+e.getPlayer().getUniqueId()+"'");
             if (rs.next()) return;
-            RTags.getPlugin().getDatabaseManager().update("INSERT INTO playerTags (uuid, identifier) VALUES ('"+e.getPlayer().getUniqueId()+"', '"+""+"')");
+            RTags.getPlugin().getDatabaseManager().update("INSERT INTO rtags_playerTags (uuid, identifier) VALUES ('"+e.getPlayer().getUniqueId()+"', '"+""+"')");
         }
     }
 

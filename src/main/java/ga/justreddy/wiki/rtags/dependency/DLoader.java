@@ -49,7 +49,7 @@ public class DLoader {
     private final Map<String, Dependency> dependencies = Maps.newHashMap();
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void onLoad(){
+    public void onLoad() throws ExceptionInInitializerError {
         if (!working) return;
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[RTags] Loading dependencies...");
         dependencyFolder = new File("plugins/RTags/libs");

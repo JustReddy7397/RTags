@@ -43,13 +43,17 @@ public final class RTags extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        if (System.getProperty("java.runtime.version").equals("1.8.0_272-b10")) {
+
+        try{
             DLoader.getInstance().onLoad();
             DLoader.getInstance().load(new Dependency("h2", "2.1.212", "com.h2database", "h2"));
             DLoader.getInstance().load(new Dependency("MongoDB-Driver", "3.12.11", "org.mongodb", "mongodb-driver"));
             DLoader.getInstance().load(new Dependency("MongoDB-Core", "3.12.11", "org.mongodb", "mongodb-driver-core"));
             DLoader.getInstance().load(new Dependency("MongoDB-Bson", "3.12.11", "org.mongodb", "bson"));
+        }catch (ClassCastException | ExceptionInInitializerError ignored) {
+
         }
+
 
 
     }

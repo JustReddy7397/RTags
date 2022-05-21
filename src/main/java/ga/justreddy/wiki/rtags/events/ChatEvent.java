@@ -1,10 +1,13 @@
 package ga.justreddy.wiki.rtags.events;
 
+import ga.justreddy.wiki.rtags.RTags;
 import ga.justreddy.wiki.rtags.tags.TagManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import java.sql.ResultSet;
 
 public class ChatEvent implements Listener {
 
@@ -22,6 +25,7 @@ public class ChatEvent implements Listener {
             e.setCancelled(true);
         }
     }
+
 
 
 
