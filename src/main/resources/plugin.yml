@@ -1,5 +1,5 @@
 name: RTags
-version: '${project.version}'
+version: '1.1.0'
 main: ga.justreddy.wiki.rtags.RTags
 api-version: 1.13
 softdepend: [ PlaceholderAPI ]
@@ -21,6 +21,9 @@ permissions:
       - rtags.command.settag
       - rtags.command.edit
       - rtags.command.view
+      - rtags.command.select
+      - rtags.command.reload
+      - rtags.command.clear
 libraries:
   - com.h2database:h2:2.1.212
   - org.mongodb:mongodb-driver:3.12.11

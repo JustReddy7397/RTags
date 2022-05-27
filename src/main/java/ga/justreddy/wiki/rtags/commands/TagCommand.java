@@ -1,9 +1,11 @@
 package ga.justreddy.wiki.rtags.commands;
 
 import ga.justreddy.wiki.rtags.RTags;
+import ga.justreddy.wiki.rtags.database.DatabaseManager;
 import ga.justreddy.wiki.rtags.menu.menus.EditMenu;
 import ga.justreddy.wiki.rtags.menu.menus.GlobalTagMenu;
 import ga.justreddy.wiki.rtags.menu.menus.PlayerTagMenu;
+import ga.justreddy.wiki.rtags.tags.Tag;
 import ga.justreddy.wiki.rtags.tags.TagData;
 import ga.justreddy.wiki.rtags.tags.TagManager;
 import ga.justreddy.wiki.rtags.utils.Utils;
@@ -17,8 +19,11 @@ import org.bukkit.entity.Player;
 import org.h2.index.Index;
 import org.jetbrains.annotations.NotNull;
 import lombok.Getter;
+
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TagCommand implements CommandExecutor {
 
@@ -31,7 +36,9 @@ public class TagCommand implements CommandExecutor {
         permissions.add(new Permission("edit <identifier>", "Edit a tag", "rtags.command.edit"));
         permissions.add(new Permission("list <all/player>", "View all/your tags", "rtags.command.view"));
         permissions.add(new Permission("clear", "Clear your current tag", "rtags.command.clear"));
-        permissions.add(new Permission("reload", "Reload the plugin", "rtags.command.reload"));}
+        permissions.add(new Permission("reload", "Reload the plugin", "rtags.command.reload"));
+        permissions.add(new Permission("select", "Select a tag you currently have", "rtags.command.select"));
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -51,6 +58,7 @@ public class TagCommand implements CommandExecutor {
                 case "info": runInfoCommand(player, args); break;
                 case "clear": runClearTagCommand(player, args); break;
                 case "reload": runReloadCommand(player, args); break;
+                case "select": runSelectTagCommand(player, args); break;
                 default: Utils.errorCommand(player, "Command doesn't exist! Try /tag help"); break;
             }
         }catch (IndexOutOfBoundsException ex) {
@@ -170,6 +178,32 @@ public class TagCommand implements CommandExecutor {
 
         RTags.getPlugin().getMessagesConfig().reload();
         Utils.sendMessage(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("reload"));
+    }
+
+
+    private void runSelectTagCommand(Player player, String[] args) {
+        if(!player.hasPermission("rtags.command.select")) {
+            Utils.errorCommand(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("no-perms").replaceAll("%permission%", "rtags.command.select"));
+            return;
+        }
+
+        try {
+            String tag = args[1];
+            Tag tag1 = TagManager.getTagManager().getTag(tag);
+            if (tag1 == null) {
+                Utils.errorCommand(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("tag-no-exist"));
+                return;
+            }
+            if (!player.hasPermission(tag1.getPermission())) {
+                Utils.errorCommand(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("not-unlocked"));
+                return;
+            }
+            TagData.getTagData().setTag(player.getUniqueId().toString(), tag);
+            Utils.sendMessage(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("tag-selected").replaceAll("%identifier%", tag));
+        }catch (IndexOutOfBoundsException ex) {
+            Utils.errorCommand(player, "Invalid arguments! /tag select <identifier>");
+        }
+
     }
 
 }

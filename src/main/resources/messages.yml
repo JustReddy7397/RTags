@@ -1,5 +1,5 @@
 # DO NOT TOUCH THIS!
-config-version: 1
+config-version: 2
 
 no-perms: "Missing permission: %permission%"
 tag-create: "&aSuccessfully created a tag with the identifier: %identifier%"
@@ -11,3 +11,4 @@ tag-description-change: "&aSuccessfully changed the description of the tag %tag%
 tag-selected: "&aSuccessfully selected the tag: %identifier%"
 tag-removed: "&aSuccessfully removed your tag"
 reload: "&aSuccessfully reloaded the plugin"
+not-unlocked: "You don't have this tag unlocked."

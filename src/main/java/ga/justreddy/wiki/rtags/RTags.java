@@ -20,11 +20,14 @@ import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.DriverManager;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public final class RTags extends JavaPlugin {
@@ -39,7 +42,7 @@ public final class RTags extends JavaPlugin {
     private YamlConfig messagesConfig;
 
     private static final int DATABASE_VERSION = 1;
-    private static final int MESSAGES_VERSION = 1;
+    private static final int MESSAGES_VERSION = 2;
 
     @Override
     public void onLoad() {
@@ -68,6 +71,7 @@ public final class RTags extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(Utils.format("&bMade by: " + getDescription().getAuthors()));
         getServer().getConsoleSender().sendMessage(Utils.format("&bVersion: " + getDescription().getVersion()));
         getServer().getConsoleSender().sendMessage(Utils.format("&bChecking for updates..."));
+        checkUpdates();
 /*        new VersionCheckerTask(this, id).getVersion(v -> {
             if(getDescription().getVersion().equalsIgnoreCase(v)){
                 getServer().getConsoleSender().sendMessage(Utils.c("&aLooks like there isn't a new update available!"));
@@ -143,4 +147,38 @@ public final class RTags extends JavaPlugin {
 
         return true;
     }
+
+    private void checkUpdates() {
+        runAsync(task -> {
+            final UpdateChecker checker = new UpdateChecker(102130);
+            if (checker.getResult() == UpdateChecker.Result.OUTDATED) {
+                Utils.sendConsole(
+                        "&2%line%",
+                        "&aA newer version of RTags is available!",
+                        "&aCurrent version: &r" + getDescription().getVersion(),
+                        "&aLatest version: &r" + checker.getLatestVersion(),
+                        "&aGet the update: &rhttps://spigotmc.org/resources/102130",
+                        "&2%line%");
+                return;
+            }
+
+            if (checker.getResult() == UpdateChecker.Result.ERROR) {
+                Utils.error(null, "Failed to check for updates", false);
+            }
+        });
+    }
+
+    private BukkitRunnable createRunnable(final Consumer<BukkitRunnable> task) {
+        return new BukkitRunnable() {
+            @Override
+            public void run() {
+                task.accept(this);
+            }
+        };
+    }
+
+     private BukkitTask runAsync(final Consumer<BukkitRunnable> task) {
+        return createRunnable(task).runTaskAsynchronously(this);
+    }
+
 }
