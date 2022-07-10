@@ -1,8 +1,5 @@
 package ga.justreddy.wiki.rtags;
 
-import dev.vaziak.mavendd.DependencyResult;
-import dev.vaziak.mavendd.MavenDownloader;
-import dev.vaziak.mavendd.ParsedPom;
 import ga.justreddy.wiki.rtags.commands.TagCommand;
 import ga.justreddy.wiki.rtags.database.DatabaseManager;
 import ga.justreddy.wiki.rtags.dependency.DLoader;
@@ -10,25 +7,20 @@ import ga.justreddy.wiki.rtags.dependency.base.Dependency;
 import ga.justreddy.wiki.rtags.events.ChatEvent;
 import ga.justreddy.wiki.rtags.events.JoinEvent;
 import ga.justreddy.wiki.rtags.menu.MenuEvent;
-import ga.justreddy.wiki.rtags.tags.TagData;
 import ga.justreddy.wiki.rtags.tags.TagManager;
 import ga.justreddy.wiki.rtags.utils.Utils;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.File;
 import java.io.IOException;
-import java.sql.DriverManager;
-import java.util.Map;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 public final class RTags extends JavaPlugin {
 
@@ -41,8 +33,11 @@ public final class RTags extends JavaPlugin {
     @Getter
     private YamlConfig messagesConfig;
 
+    @Getter
+    private Permission permission = null;
+
     private static final int DATABASE_VERSION = 1;
-    private static final int MESSAGES_VERSION = 2;
+    private static final int MESSAGES_VERSION = 4;
 
     @Override
     public void onLoad() {
@@ -72,6 +67,7 @@ public final class RTags extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(Utils.format("&bVersion: " + getDescription().getVersion()));
         getServer().getConsoleSender().sendMessage(Utils.format("&bChecking for updates..."));
         checkUpdates();
+        setupPermissions();
 /*        new VersionCheckerTask(this, id).getVersion(v -> {
             if(getDescription().getVersion().equalsIgnoreCase(v)){
                 getServer().getConsoleSender().sendMessage(Utils.c("&aLooks like there isn't a new update available!"));
@@ -168,6 +164,10 @@ public final class RTags extends JavaPlugin {
         });
     }
 
+    private void setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        permission = rsp.getProvider();
+    }
     private BukkitRunnable createRunnable(final Consumer<BukkitRunnable> task) {
         return new BukkitRunnable() {
             @Override

@@ -1,7 +1,8 @@
 name: RTags
-version: '1.1.0'
+version: '1.2.0'
 main: ga.justreddy.wiki.rtags.RTags
 api-version: 1.13
+depend: [Vault]
 softdepend: [ PlaceholderAPI ]
 authors: [ JustReddy ]
 description: Tags plugin with database support!
@@ -24,6 +25,8 @@ permissions:
       - rtags.command.select
       - rtags.command.reload
       - rtags.command.clear
+      - rtags.command.add
+      - rtags.command.remove
 libraries:
   - com.h2database:h2:2.1.212
   - org.mongodb:mongodb-driver:3.12.11

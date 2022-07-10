@@ -1,7 +1,6 @@
 package ga.justreddy.wiki.rtags.commands;
 
 import ga.justreddy.wiki.rtags.RTags;
-import ga.justreddy.wiki.rtags.database.DatabaseManager;
 import ga.justreddy.wiki.rtags.menu.menus.EditMenu;
 import ga.justreddy.wiki.rtags.menu.menus.GlobalTagMenu;
 import ga.justreddy.wiki.rtags.menu.menus.PlayerTagMenu;
@@ -9,6 +8,7 @@ import ga.justreddy.wiki.rtags.tags.Tag;
 import ga.justreddy.wiki.rtags.tags.TagData;
 import ga.justreddy.wiki.rtags.tags.TagManager;
 import ga.justreddy.wiki.rtags.utils.Utils;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -16,14 +16,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.h2.index.Index;
+import org.bukkit.profile.PlayerProfile;
 import org.jetbrains.annotations.NotNull;
-import lombok.Getter;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class TagCommand implements CommandExecutor {
 
@@ -38,37 +35,41 @@ public class TagCommand implements CommandExecutor {
         permissions.add(new Permission("clear", "Clear your current tag", "rtags.command.clear"));
         permissions.add(new Permission("reload", "Reload the plugin", "rtags.command.reload"));
         permissions.add(new Permission("select", "Select a tag you currently have", "rtags.command.select"));
+        permissions.add(new Permission("add", "Add a tag to a player", "rtags.command.add"));
+        permissions.add(new Permission("remove", "Remove a tag from someone", "rtags.command.remove"));
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(!(sender instanceof Player)) {
-            Utils.sendConsole("&cYou need to be a player to execute this command");
-            return true;
-        }
-        final Player player = (Player) sender;
         try{
             switch (args[0]) {
-                case "create": runCreateTagCommand(player, args); break;
-                case "delete": runDeleteTagCommand(player, args); break;
-                case "settag": runSetTagCommand(player, args); break;
-                case "edit": runEditCommand(player, args); break;
-                case "help": runHelpCommand(player, args); break;
-                case "list": runListCommand(player, args); break;
-                case "info": runInfoCommand(player, args); break;
-                case "clear": runClearTagCommand(player, args); break;
-                case "reload": runReloadCommand(player, args); break;
-                case "select": runSelectTagCommand(player, args); break;
-                default: Utils.errorCommand(player, "Command doesn't exist! Try /tag help"); break;
+                case "create": runCreateTagCommand(sender, args); break;
+                case "delete": runDeleteTagCommand(sender, args); break;
+                case "settag": runSetTagCommand(sender, args); break;
+                case "edit": runEditCommand(sender, args); break;
+                case "help": runHelpCommand(sender, args); break;
+                case "list": runListCommand(sender, args); break;
+                case "info": runInfoCommand(sender, args); break;
+                case "clear": runClearTagCommand(sender, args); break;
+                case "reload": runReloadCommand(sender, args); break;
+                case "select": runSelectTagCommand(sender, args); break;
+                case "add": addCommand(sender, args); break;
+                case "remove": removeCommand(sender, args); break;
+                default: Utils.errorCommand(sender, "Command doesn't exist! Try /tag help"); break;
             }
         }catch (IndexOutOfBoundsException ex) {
-            Utils.errorCommand(player, "No arguments given! Try /tag help");
+            Utils.errorCommand(sender, "No arguments given! Try /tag help");
         }
 
         return true;
     }
 
-    private void runCreateTagCommand(Player player, String[] args) {
+    private void runCreateTagCommand(CommandSender sender, String[] args) {
+        if(!(sender instanceof Player)) {
+            Utils.sendConsole("&cYou need to be a player to execute this command");
+            return;
+        }
+        Player player = (Player) sender;
         try{
             if(!player.hasPermission("rtags.command.create")) {
                 Utils.errorCommand(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("no-perms").replaceAll("%permission%", "rtags.command.create"));
@@ -80,7 +81,12 @@ public class TagCommand implements CommandExecutor {
         }
     }
 
-    private void runDeleteTagCommand(Player player, String[] args) {
+    private void runDeleteTagCommand(CommandSender sender, String[] args) {
+        if(!(sender instanceof Player)) {
+            Utils.sendConsole("&cYou need to be a player to execute this command");
+            return;
+        }
+        Player player = (Player) sender;
         try{
             if(!player.hasPermission("rtags.command.delete")) {
                 Utils.errorCommand(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("no-perms").replaceAll("%permission%", "rtags.command.delete"));
@@ -92,21 +98,34 @@ public class TagCommand implements CommandExecutor {
         }
     }
 
-    private void runSetTagCommand(Player player, String[] args) {
+    private void runSetTagCommand(CommandSender sender, String[] args) {
+        if(!(sender instanceof Player)) {
+            Utils.sendConsole("&cYou need to be a player to execute this command");
+            return;
+        }
+        Player player = (Player) sender;
         try{
             if(!player.hasPermission("rtags.command.settag")) {
                 Utils.errorCommand(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("no-perms").replaceAll("%permission%", "rtags.command.settag"));
                 return;
             }
             Player player1 = Bukkit.getPlayer(args[1]);
-            if (player == null) return;
+            if (player1 == null) {
+                Utils.errorCommand(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("not-found"));
+                return;
+            }
             TagData.getTagData().setTag(player1.getUniqueId().toString(), args[2]);
         }catch (IndexOutOfBoundsException ex){
             Utils.errorCommand(player, "Invalid arguments! /tag settag <player> <identifier>");
         }
     }
 
-    private void runEditCommand(Player player, String[] args) {
+    private void runEditCommand(CommandSender sender, String[] args) {
+        if(!(sender instanceof Player)) {
+            Utils.sendConsole("&cYou need to be a player to execute this command");
+            return;
+        }
+        Player player = (Player) sender;
         try{
             if(!player.hasPermission("rtags.command.edit")) {
                 Utils.errorCommand(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("no-perms").replaceAll("%permission%", "rtags.command.edit"));
@@ -122,7 +141,12 @@ public class TagCommand implements CommandExecutor {
         }
     }
 
-    private void runHelpCommand(Player player, String[] args) {
+    private void runHelpCommand(CommandSender sender, String[] args) {
+        if(!(sender instanceof Player)) {
+            Utils.sendConsole("&cYou need to be a player to execute this command");
+            return;
+        }
+        Player player = (Player) sender;
         if (!player.hasPermission("rtags.command.help")) {
             Utils.sendMessage(player, "&b/tags info &7- &eShows info about this plugin");
             return;
@@ -136,7 +160,12 @@ public class TagCommand implements CommandExecutor {
         Utils.sendMessage(player, "&b%line%" ,desc.toString(), "&b/tags info &7- &eShows info about this plugin", "&b%line%");
     }
 
-    private void runClearTagCommand(Player player, String[] args) {
+    private void runClearTagCommand(CommandSender sender, String[] args) {
+        if(!(sender instanceof Player)) {
+            Utils.sendConsole("&cYou need to be a player to execute this command");
+            return;
+        }
+        Player player = (Player) sender;
         if(!player.hasPermission("rtags.command.edit")) {
             Utils.errorCommand(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("no-perms").replaceAll("%permission%", "rtags.command.clear"));
             return;
@@ -147,11 +176,16 @@ public class TagCommand implements CommandExecutor {
 
     }
 
-    private void runInfoCommand(Player player, String[] args) {
-        Utils.sendMessage(player, "&e%line%", "&bThis server is running", "&bRTags version &l" + RTags.getPlugin().getDescription().getVersion(), "&bBy JustReddy", "&e%line%");
+    private void runInfoCommand(CommandSender sender, String[] args) {
+        Utils.sendMessage(sender, "&e%line%", "&bThis server is running", "&bRTags version &l" + RTags.getPlugin().getDescription().getVersion(), "&bBy JustReddy", "&e%line%");
     }
 
-    private void runListCommand(Player player, String[] args) {
+    private void runListCommand(CommandSender sender, String[] args) {
+        if(!(sender instanceof Player)) {
+            Utils.sendConsole("&cYou need to be a player to execute this command");
+            return;
+        }
+        Player player = (Player) sender;
         try{
             if (args[1].equalsIgnoreCase("all") && player.hasPermission("rtags.view.all")) {
                 new GlobalTagMenu().open(player);
@@ -170,7 +204,12 @@ public class TagCommand implements CommandExecutor {
     }
 
     @SneakyThrows
-    private void runReloadCommand(Player player, String[] args) {
+    private void runReloadCommand(CommandSender sender, String[] args) {
+        if(!(sender instanceof Player)) {
+            Utils.sendConsole("&cYou need to be a player to execute this command");
+            return;
+        }
+        Player player = (Player) sender;
         if(!player.hasPermission("rtags.command.reload")) {
             Utils.errorCommand(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("no-perms").replaceAll("%permission%", "rtags.command.reload"));
             return;
@@ -181,7 +220,12 @@ public class TagCommand implements CommandExecutor {
     }
 
 
-    private void runSelectTagCommand(Player player, String[] args) {
+    private void runSelectTagCommand(CommandSender sender, String[] args) {
+        if(!(sender instanceof Player)) {
+            Utils.sendConsole("&cYou need to be a player to execute this command");
+            return;
+        }
+        Player player = (Player) sender;
         if(!player.hasPermission("rtags.command.select")) {
             Utils.errorCommand(player, RTags.getPlugin().getMessagesConfig().getConfig().getString("no-perms").replaceAll("%permission%", "rtags.command.select"));
             return;
@@ -204,6 +248,67 @@ public class TagCommand implements CommandExecutor {
             Utils.errorCommand(player, "Invalid arguments! /tag select <identifier>");
         }
 
+    }
+
+    private void addCommand(CommandSender sender, String[] args) {
+        if(!sender.hasPermission("rtags.command.add")) {
+            Utils.errorCommand(sender, RTags.getPlugin().getMessagesConfig().getConfig().getString("no-perms").replaceAll("%permission%", "rtags.command.add"));
+            return;
+        }
+        try{
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
+            Tag tag = TagManager.getTagManager().getTag(args[2]);
+
+            if (tag == null) {
+                Utils.errorCommand(sender, RTags.getPlugin().getMessagesConfig().getConfig().getString("tag-no-exist"));
+                return;
+            }
+
+            if (RTags.getPlugin().getPermission().playerHas(null, offlinePlayer, tag.getPermission())) {
+                Utils.errorCommand(sender, RTags.getPlugin().getMessagesConfig().getConfig().getString("player-tag-already-unlocked").replaceAll("%player%", offlinePlayer.getName()));
+                return;
+            }
+
+            RTags.getPlugin().getPermission().playerAdd(null, offlinePlayer, tag.getPermission());
+
+            Utils.sendMessage(sender, RTags.getPlugin().getMessagesConfig().getConfig().getString("player-tag-added")
+                    .replaceAll("%identifier%", tag.getIdentifier())
+                    .replaceAll("%player%", offlinePlayer.getName()));;
+        }catch (IndexOutOfBoundsException ex) {
+            Utils.errorCommand(sender, "Invalid Arguments! /tag add <player> <identifier>");
+        }
+    }
+
+    private void removeCommand(CommandSender sender, String[] args) {
+        if(!sender.hasPermission("rtags.command.remove")) {
+            Utils.errorCommand(sender, RTags.getPlugin().getMessagesConfig().getConfig().getString("no-perms").replaceAll("%permission%", "rtags.command.remove"));
+            return;
+        }
+        try{
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
+            Tag tag = TagManager.getTagManager().getTag(args[2]);
+
+            if (tag == null) {
+                Utils.errorCommand(sender, RTags.getPlugin().getMessagesConfig().getConfig().getString("tag-no-exist"));
+                return;
+            }
+
+            if (!RTags.getPlugin().getPermission().playerHas(null, offlinePlayer, tag.getPermission())) {
+                Utils.errorCommand(sender, RTags.getPlugin().getMessagesConfig().getConfig().getString("player-tag-not-unlocked").replaceAll("%player%", offlinePlayer.getName()));
+                return;
+            }
+
+            RTags.getPlugin().getPermission().playerAdd(null, offlinePlayer, tag.getPermission());
+            if(TagData.getTagData().isTagEnabled(offlinePlayer.getUniqueId().toString(), tag.getIdentifier())) {
+                TagData.getTagData().setTag(offlinePlayer.getUniqueId().toString(), "");
+            }
+
+            Utils.sendMessage(sender, RTags.getPlugin().getMessagesConfig().getConfig().getString("player-tag-removed")
+                    .replaceAll("%identifier%", tag.getIdentifier())
+                    .replaceAll("%player%", offlinePlayer.getName()));;
+        }catch (IndexOutOfBoundsException ex) {
+            Utils.errorCommand(sender, "Invalid Arguments! /tag remove <player> <identifier>");
+        }
     }
 
 }

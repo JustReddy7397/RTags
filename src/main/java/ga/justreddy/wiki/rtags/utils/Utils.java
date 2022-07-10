@@ -3,6 +3,7 @@ package ga.justreddy.wiki.rtags.utils;
 import ga.justreddy.wiki.rtags.RTags;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,13 +29,13 @@ public class Utils {
         return list;
     }
 
-    public static void sendMessage(@NotNull Player player, @NotNull String message) {
-        player.sendMessage(format(message.replace("%line%", CHAT_LINE)));
+    public static void sendMessage(@NotNull CommandSender sender, @NotNull String message) {
+        sender.sendMessage(format(message.replace("%line%", CHAT_LINE)));
     }
 
-    public static void sendMessage(Player player, String... message) {
+    public static void sendMessage(CommandSender sender, String... message) {
         for (String line : message) {
-            sendMessage(player, line);
+            sendMessage(sender, line);
         }
     }
 
@@ -65,8 +66,8 @@ public class Utils {
         }
     }
 
-    public static void errorCommand(Player player, String description) {
-        sendMessage(player, "&4%line%", "&cAn error occurred while running this command", "&cDescription: &6" + description, "&4%line%");
+    public static void errorCommand(CommandSender sender, String description) {
+        sendMessage(sender, "&4%line%", "&cAn error occurred while running this command", "&cDescription: &6" + description, "&4%line%");
     }
 
     public static void sendConsole(String message) {

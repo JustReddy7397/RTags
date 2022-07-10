@@ -115,4 +115,8 @@ public class TagData {
             databaseManager.update("UPDATE rtags_tags SET description='" + newDescription + "' WHERE identifier='" + identifier + "'");
         }
     }
+
+    public boolean isTagEnabled(String uuid, String identifier) {
+        return getTag(uuid).equals(identifier);
+    }
 }

@@ -1,5 +1,5 @@
 # DO NOT TOUCH THIS!
-config-version: 2
+config-version: 4
 
 no-perms: "Missing permission: %permission%"
 tag-create: "&aSuccessfully created a tag with the identifier: %identifier%"
@@ -12,3 +12,8 @@ tag-selected: "&aSuccessfully selected the tag: %identifier%"
 tag-removed: "&aSuccessfully removed your tag"
 reload: "&aSuccessfully reloaded the plugin"
 not-unlocked: "You don't have this tag unlocked."
+not-found: "&cCan't find the requested player"
+player-tag-already-unlocked: "%player% already has this tag unlocked"
+player-tag-not-unlocked: "%player% doesn't have this tag unlocked"
+player-tag-added: "&aSuccessfully added the tag &l%identifier% &ato &l%player%"
+player-tag-removed: "&aSuccessfully removed the tag &l%identifier% &afrom &l%player%"
